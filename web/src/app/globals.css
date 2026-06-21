@@ -1,0 +1,136 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+/* single dark theme lives in :root, so disable media-based dark: */
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme inline {
+    --color-background: var(--background);
+    --color-foreground: var(--foreground);
+    --font-sans: var(--font-sans);
+    --font-serif: var(--font-serif);
+    --font-heading: var(--font-sans);
+    --color-ring: var(--ring);
+    --color-input: var(--input);
+    --color-border: var(--border);
+    --color-destructive: var(--destructive);
+    --color-accent-foreground: var(--accent-foreground);
+    --color-accent: var(--accent);
+    --color-muted-foreground: var(--muted-foreground);
+    --color-muted: var(--muted);
+    --color-secondary-foreground: var(--secondary-foreground);
+    --color-secondary: var(--secondary);
+    --color-primary-foreground: var(--primary-foreground);
+    --color-primary: var(--primary);
+    --color-popover-foreground: var(--popover-foreground);
+    --color-popover: var(--popover);
+    --color-card-foreground: var(--card-foreground);
+    --color-card: var(--card);
+
+    /* PRED trade palette */
+    --color-pred-bg: var(--pred-bg);
+    --color-pred-deep: var(--pred-deep);
+    --color-pred-panel: var(--pred-panel);
+    --color-pred-input: var(--pred-input);
+    --color-pred-elevated: var(--pred-elevated);
+    --color-pred-active: var(--pred-active);
+    --color-pred-white: var(--pred-white);
+    --color-pred-green: var(--pred-green);
+    --color-pred-red: var(--pred-red);
+    --color-pred-text: var(--pred-text);
+    --color-pred-dim: var(--pred-dim);
+    --color-pred-dimmer: var(--pred-dimmer);
+    --color-pred-edge: var(--pred-edge);
+    --color-pred-ink: var(--pred-ink);
+
+    --radius-sm: calc(var(--radius) * 0.6);
+    --radius-md: calc(var(--radius) * 0.8);
+    --radius-lg: var(--radius);
+    --radius-xl: calc(var(--radius) * 1.4);
+    --radius-2xl: calc(var(--radius) * 1.8);
+    --radius-3xl: calc(var(--radius) * 2.2);
+    --radius-4xl: calc(var(--radius) * 2.6);
+}
+
+:root {
+    --background: #052320;
+    --foreground: #e6f1ee;
+    --accent: #05f7d6;
+    --accent-foreground: #042520;
+    --card: #04201c;
+    --card-foreground: #e6f1ee;
+    --popover: #08312b;
+    --popover-foreground: #e6f1ee;
+    --primary: #05f7d6;
+    --primary-foreground: #042520;
+    --secondary: #08312b;
+    --secondary-foreground: #cfe6e0;
+    --muted: #072821;
+    --muted-foreground: #7d9b94;
+    --destructive: #f0564a;
+    --border: rgb(127 200 185 / 0.12);
+    --input: rgb(127 200 185 / 0.16);
+    --ring: #05f7d6;
+
+    /* PRED trade palette */
+    --pred-bg: #052320;
+    --pred-deep: #041d1a;
+    --pred-panel: #04201c;
+    --pred-input: #072821;
+    --pred-elevated: #08312b;
+    --pred-active: #0c3a33;
+    --pred-white: #ffffff;
+    --pred-green: #16c784;
+    --pred-red: #f0564a;
+    --pred-text: #e6f1ee;
+    --pred-dim: #7d9b94;
+    --pred-dimmer: #5f827b;
+    --pred-edge: #7fc8b9;
+    --pred-ink: #042520;
+}
+
+body {
+    font-family: var(--font-sans), "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+@layer base {
+    * {
+        @apply border-border outline-ring/50 box-border;
+    }
+    body {
+        @apply bg-background text-foreground;
+    }
+    html {
+        @apply font-sans;
+    }
+}
+
+/* thin mint scrollbars */
+::-webkit-scrollbar {
+    width: 5px;
+    height: 5px;
+}
+::-webkit-scrollbar-thumb {
+    background: rgb(127 200 185 / 0.18);
+    border-radius: 3px;
+}
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+input::placeholder {
+    color: var(--pred-dimmer);
+}
+
+/* no focus ring when clicking a chart */
+.recharts-wrapper,
+.recharts-wrapper *,
+.recharts-surface,
+.recharts-surface * {
+    outline: none !important;
+}
+
+/* resizable panels render pixel sizes until measured, let them fill on first paint */
+[data-slot="resizable-panel"] {
+    flex-grow: 1;
+}
