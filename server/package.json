@@ -1,0 +1,36 @@
+{
+    "name": "pred-server",
+    "version": "0.1.0",
+    "private": true,
+    "type": "module",
+    "scripts": {
+        "dev": "tsx watch main.ts",
+        "start": "tsx main.ts",
+        "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js"
+    },
+    "dependencies": {
+        "@grpc/grpc-js": "^1.14.4",
+        "@mysten/enoki": "^1.1.1",
+        "@mysten/sui": "^2.17.0",
+        "@privy-io/server-auth": "^1.32.5",
+        "@protobuf-ts/grpc-transport": "^2.11.1",
+        "cors": "^2.8.5",
+        "dotenv": "^17.4.2",
+        "express": "^5.1.0",
+        "ioredis": "^5.4.1",
+        "jose": "^6.2.3",
+        "socket.io": "^4.8.1"
+    },
+    "devDependencies": {
+        "@jest/globals": "^30.0.0",
+        "@types/cors": "^2.8.17",
+        "@types/express": "^5.0.0",
+        "@types/jest": "^30.0.0",
+        "@types/node": "^25.9.1",
+        "jest": "^30.0.0",
+        "socket.io-client": "^4.8.3",
+        "ts-jest": "^29.2.5",
+        "tsx": "^4.22.4",
+        "typescript": "^6.0.3"
+    }
+}

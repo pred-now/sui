@@ -1,0 +1,20 @@
+{
+    "name": "pred-leverage-sim",
+    "version": "0.1.0",
+    "private": true,
+    "type": "module",
+    "description": "Simulation harness comparing leverage bad-debt strategies for a binary prediction market",
+    "scripts": {
+        "start": "tsx src/main.ts",
+        "all": "tsx src/main.ts --scenario all",
+        "harden": "tsx src/harden.ts",
+        "elasticity": "tsx src/elasticity.ts",
+        "capital": "tsx src/capital.ts",
+        "typecheck": "tsc --noEmit"
+    },
+    "devDependencies": {
+        "@types/node": "^20",
+        "tsx": "^4.19.2",
+        "typescript": "^5"
+    }
+}

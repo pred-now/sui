@@ -1,0 +1,47 @@
+{
+    "name": "pred-web",
+    "version": "0.1.0",
+    "private": true,
+    "scripts": {
+        "dev": "next dev",
+        "build": "next build",
+        "start": "next start",
+        "lint": "eslint",
+        "format": "prettier --write \"./**/(*.tsx|*.ts|*.jsx|*.js|*.css|*.json)\""
+    },
+    "dependencies": {
+        "@mysten/dapp-kit": "^1.1.1",
+        "@mysten/enoki": "^1.1.1",
+        "@mysten/sui": "^2.19.0",
+        "@privy-io/react-auth": "^3.32.1",
+        "@tanstack/react-query": "^5.101.0",
+        "class-variance-authority": "^0.7.1",
+        "clsx": "^2.1.1",
+        "lightweight-charts": "^5.2.0",
+        "lucide-react": "^1.21.0",
+        "next": "16.2.9",
+        "qrcode": "^1.5.4",
+        "radix-ui": "^1.6.0",
+        "react": "19.2.4",
+        "react-dom": "19.2.4",
+        "react-resizable-panels": "^2.1.9",
+        "recharts": "^3.8.1",
+        "shadcn": "^4.11.0",
+        "socket.io-client": "^4.8.3",
+        "tailwind-merge": "^3.6.0",
+        "tw-animate-css": "^1.4.0"
+    },
+    "devDependencies": {
+        "@tailwindcss/postcss": "^4",
+        "@types/node": "^20",
+        "@types/qrcode": "^1.5.6",
+        "@types/react": "^19",
+        "@types/react-dom": "^19",
+        "babel-plugin-react-compiler": "1.0.0",
+        "eslint": "^9",
+        "eslint-config-next": "16.2.9",
+        "prettier": "^3.8.4",
+        "tailwindcss": "^4",
+        "typescript": "^5"
+    }
+}

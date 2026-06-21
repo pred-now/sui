@@ -1,0 +1,51 @@
+# Root ignore rules for the whole repo. Patterns without a leading slash match at
+# any depth, so this one file covers every package (server, web, docs, simulations).
+
+# Dependencies
+node_modules/
+.pnp
+.pnp.*
+
+# Build output and caches
+.next/
+out/
+build/
+dist/
+.turbo/
+*.tsbuildinfo
+next-env.d.ts
+
+# Test coverage
+coverage/
+
+# Environment and secrets. Real env files are never committed; templates are.
+.env
+.env.*
+!.env.template
+!.env.example
+
+# Python (the economics simulation uses a small plotting script)
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# Editor and OS junk
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.pem
+
+# Deploy
+.vercel/
+
+# Local on-chain experiments (scratch, not part of the app)
+sandbox/

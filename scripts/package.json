@@ -1,0 +1,17 @@
+{
+    "name": "pred-scripts",
+    "private": true,
+    "type": "module",
+    "scripts": {
+        "watch-admin-funds": "tsx watch-admin-funds.ts"
+    },
+    "dependencies": {
+        "@mysten/sui": "^2.17.0",
+        "dotenv": "^17.4.2"
+    },
+    "devDependencies": {
+        "@types/node": "^25.9.1",
+        "tsx": "^4.22.4",
+        "typescript": "^6.0.3"
+    }
+}
