@@ -1,0 +1,51 @@
+---
+title: Withdrawals and Cooldown
+---
+
+# Withdrawals and Cooldown
+
+You can take capital out of the pool, but not capital that is currently backing
+open risk. If the pool could be drained while it is backing live positions, the
+capital rule would break and the whole system would be undercollateralized. So
+withdrawals are gated.
+
+## What is free to withdraw
+
+At any moment, part of the pool is required to back open risk and the rest is
+free:
+
+```
+requiredCapital = 0.14 * leveragedOI
+freeCapital     = poolAssets - requiredCapital
+```
+
+A withdrawal can take at most the free capital, and at most the hot slice
+actually on hand. New leveraged positions are refused when they would push open
+interest above `poolAssets / 0.14`. Withdrawals and new opens are gated on the
+same rule, from both sides.
+
+## Request, cooldown, claim
+
+Unstaking is not instant. It runs in three steps:
+
+1. **Request** a withdrawal.
+2. **Wait** out a cooldown, an epoch or a fixed window.
+3. **Claim** the funds.
+
+The cooldown exists to stop a bank run. Without it, stakers could rush the exit
+exactly when stress is rising, draining the pool at the worst possible moment,
+right when it is most needed to back risk.
+
+## Re-checked at claim time
+
+The utilization gate is checked again when you claim, not only when you request.
+If the pool is fully utilized at claim time, so that paying you would breach the
+capital rule, the claim waits until there is enough free capital. This keeps the
+rule true at every moment, not just on average.
+
+## In short
+
+- You can always withdraw your free capital.
+- Capital backing open risk is locked until that risk clears.
+- A cooldown sits between request and claim.
+- The rule is enforced again at claim, so a payout never breaks solvency.

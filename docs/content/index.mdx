@@ -1,0 +1,57 @@
+---
+title: Introduction
+---
+
+import { Callout, Cards } from "nextra/components";
+
+# Welcome to Pred
+
+Pred is a prediction market where you can bet on real-world questions, and bet
+bigger with leverage. Will a team win? Will a price be above a number on
+Friday? You take a side, and if you are right, you get paid.
+
+Pred runs on [Sui](https://sui.io). Under the hood it is built on DeepBook
+Predict, Sui's on-chain prediction market layer.
+
+<Callout type="warning" emoji="⚠️">
+**Pred is live on testnet, and the economy is still an experiment.**
+
+You are trading with test funds, not real money. We are still tuning how the
+pricing, lending, and pool math behave with real flow. Leverage on prediction
+markets is genuinely hard to get right, so numbers and rules in these docs can
+change as we learn. Treat everything here as a work in progress.
+</Callout>
+
+## Two things make Pred different
+
+Most prediction markets just let you bet. Pred does two jobs at once.
+
+1. **It is a bookmaker.** Pred quotes both sides of every market and pays
+   winners out of losers' money. It never takes a side itself.
+2. **It lets you use leverage.** You can borrow from Pred to make a bigger bet
+   than your own cash would allow, up to 5x today.
+
+The second part is the interesting one. Lending against a bet that can drop to
+zero the instant a market resolves is a hard problem. Most of these docs are
+about how Pred does that safely.
+
+## Start here
+
+<Cards>
+  <Cards.Card title="What is Pred" href="/basics/what-is-pred" arrow />
+  <Cards.Card title="How prediction markets work" href="/basics/prediction-markets" arrow />
+  <Cards.Card title="Trading on Pred" href="/basics/trading" arrow />
+  <Cards.Card title="Using leverage" href="/basics/leverage" arrow />
+</Cards>
+
+## Going deeper
+
+- **[How the Economy Works](/economy/overview)** explains, in plain words, how
+  Pred earns and how it stays solvent.
+- **[The LP Pool](/lp-pool/overview)** is how outside stakers fund Pred's risk
+  capital and earn real yield for it.
+- **[Technical Reference](/technical/overview)** is the engineering detail: the
+  pricing math, the steering, the safety rules, and custody.
+
+If you read nothing else, read [How the Economy Works](/economy/overview). It
+is the heart of Pred.

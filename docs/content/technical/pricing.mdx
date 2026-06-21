@@ -1,0 +1,63 @@
+---
+title: Pricing and the Spread
+---
+
+# Pricing and the Spread
+
+Every bet is priced off the oracle fair probability `f`. Pred quotes two asks
+around it.
+
+## The quote
+
+```
+yesAsk = clamp(f       + h + k, 0, 1)
+noAsk  = clamp((1 - f) + h - k, 0, 1)
+```
+
+`h` is the half spread, Pred's margin. `k` is the steering lean. The user buys
+their side at its ask.
+
+The important identity:
+
+```
+yesAsk + noAsk = 1 + 2h
+```
+
+The lean `k` cancels. So leaning never costs Pred margin. It only tilts which
+side is the better deal, which biases who bets next. Steering is covered on the
+next page, [Steering](/technical/steering).
+
+## The spread is risk priced
+
+`h` is never constant. It is a floor plus a set of risk terms.
+
+```
+h = hedgeFloor
+  + cTail * (1 / (f * (1 - f)) - 4)   // widens at the tails
+  + cTime * (1 - T)                   // widens into expiry
+  + cUnc  * vol                       // widens on oracle uncertainty
+  + cVel  * velocity                  // widens on fast one-sided flow
+```
+
+- **hedgeFloor** is at least half the vault spread, so a fill Pred must lay off
+  never loses money.
+- **Tail term** blows up as `f` approaches 0 or 1. This is correct: a small
+  error on a 2 cent longshot is a 50x mistake in relative terms.
+- **Time term** widens as the remaining time `T` falls toward 0.
+- **Uncertainty term** widens when the oracle is less sure.
+- **Velocity term** widens when one side arrives fast. This is the informed-flow
+  tax.
+
+## Computing velocity cheaply
+
+The velocity input is a per-market exponentially-decayed counter of signed bet
+flow, read at quote time. There are no windows to scan, just one decaying
+number. The same decayed signed flow feeds the steering lean `k`, so the
+imbalance signal is consistent between pricing and steering.
+
+## Staleness
+
+Both inputs, `f` and `vol`, come from the oracle read, and that read can be
+stale. If the oracle timestamp is older than the staleness bound, Pred does not
+quote at all. The market returns "paused" rather than show a price it cannot
+stand behind. See [Oracle and Settlement](/technical/settlement).

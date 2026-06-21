@@ -1,0 +1,78 @@
+---
+title: The Capital Rule
+---
+
+import { Callout } from "nextra/components";
+
+# The Capital Rule
+
+Two hard limits make the whole design safe: the imbalance ceiling and the
+capital rule. Both are enforced before an open is accepted, not as a setup
+calculation.
+
+## Where 0.14 comes from
+
+Pred simulated the worst pool loss per unit of peak leveraged open interest,
+over 20,000 single-market runs including black swans.
+
+| loss / OI | p99 | p99.9 | p99.99 |
+| --- | --- | --- | --- |
+| normal | 0.070 | 0.110 | 0.148 |
+| jump | 0.085 | 0.136 | 0.166 |
+
+The rule takes the conservative p99.9:
+
+> Hold pool plus treasury at least **0.14 times** peak leveraged open interest.
+> Equivalently, cap leveraged OI at about **7 times** the pool.
+
+In simulation, sizing the pool to 0.14 times median OI drops single-market
+insolvency from about 0.5 percent to about 0.04 percent.
+
+## The admission check
+
+Every open is checked in the engine before any signing:
+
+```
+projImb = imbalance after this open
+projOI  = peak leveraged OI for the backing pool after this open
+
+accept if projImb <= ceiling AND projOI <= pool / 0.14
+else accept only if the open reduces imbalance, otherwise refuse
+```
+
+The ceiling is 20 percent, well below the roughly 34 percent break point. See
+[The Safety Wall](/economy/safety-wall) for the three-layer margin.
+
+## Correlation cohorts
+
+One subtlety. The 0.14 ratio was derived from single-market tails. Markets that
+resolve on the same real-world event jump together and do not diversify.
+
+<Callout type="warning">
+For a group of correlated markets backed by one pool, gate on the summed cohort
+open interest, not per market. Independent, staggered markets can share a pool
+with a smaller aggregate buffer because their tails are independent.
+</Callout>
+
+So each market is tagged with a correlation cohort id. The gate sums OI within a
+cohort and applies 0.14 to that sum. A market defaults into its own cohort
+unless explicitly marked independent. Conservative by default, which is what you
+want for the rule that keeps Pred solvent.
+
+## The invariants
+
+These hold at all times, checked continuously:
+
+- `poolAssets >= 0.14 * leveragedOI`. Both new opens and withdrawals are gated
+  on it.
+- `hot >=` the floor needed to cover a bad stretch without waiting on a Margin
+  withdrawal.
+- Share accounting closes: the sum of all share values equals `poolAssets`. No
+  path mints or burns shares without moving assets.
+- Pred only ever supplies and withdraws its own funds in Margin. No borrow path
+  exists.
+- Every fee and every loss moves `poolAssets` exactly once, keyed on the
+  originating event id, so a retry never double counts.
+
+These are not aspirations. They are re-proven by the
+[validation harness](/technical/harness) on every parameter change.

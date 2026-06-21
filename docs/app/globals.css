@@ -1,0 +1,124 @@
+/* Pred palette, mirrors the web app */
+:root,
+.dark {
+    --pred-bg: #052320;
+    --pred-deep: #041d1a;
+    --pred-panel: #04201c;
+    --pred-input: #072821;
+    --pred-elevated: #08312b;
+    --pred-active: #0c3a33;
+    --pred-text: #e6f1ee;
+    --pred-dim: #7d9b94;
+    --pred-edge: #7fc8b9;
+    --pred-accent: #05f7d6;
+    --pred-green: #16c784;
+    --pred-red: #f0564a;
+}
+
+/* retint cold gray borders to teal */
+:root,
+.dark {
+    --x-color-gray-600: oklch(44.6% 0.02 172);
+    --x-color-gray-700: oklch(37.3% 0.022 172);
+    --x-color-gray-800: oklch(27.8% 0.024 172);
+    --x-color-gray-900: oklch(21% 0.026 172);
+    --x-color-neutral-700: oklch(37.1% 0.022 172);
+    --x-color-neutral-800: oklch(26.9% 0.024 172);
+    --x-color-neutral-900: oklch(20.5% 0.026 172);
+}
+
+/* TEMP: paint every border red to spot them */
+*,
+*::before,
+*::after {
+    border-color: rgba(255, 255, 255, 0.096) !important;
+}
+
+/* fonts from the app */
+html {
+    font-family: var(--font-sans), "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+body {
+    background: var(--pred-bg);
+    color: var(--pred-text);
+}
+
+h1,
+h2,
+h3,
+h4 {
+    font-family: var(--font-sans);
+    letter-spacing: -0.01em;
+}
+
+/* brand mark in navbar */
+.pred-brand {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+.pred-brand-mark {
+    height: 36px;
+    width: auto;
+}
+.pred-brand-text {
+    font-family: var(--font-serif);
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: var(--pred-text);
+}
+
+/* surfaces match Pred panels */
+.nextra-navbar,
+.nextra-banner-container {
+    background: var(--pred-deep) !important;
+    border-color: rgba(255, 255, 255, 0.096) !important;
+}
+.nextra-navbar-blur {
+    background: color-mix(in srgb, var(--pred-deep) 85%, transparent) !important;
+    backdrop-filter: blur(8px);
+}
+.nextra-sidebar-container {
+    background: var(--pred-bg) !important;
+}
+
+/* sidebar links */
+.nextra-sidebar-container a {
+    color: var(--pred-dim);
+}
+.nextra-sidebar-container a:hover {
+    color: var(--pred-text);
+    background: var(--pred-elevated) !important;
+}
+.nextra-sidebar-container .nextra-focus[data-active="true"],
+.nextra-sidebar-container a[data-active="true"] {
+    background: var(--pred-elevated) !important;
+    color: var(--pred-accent) !important;
+}
+
+/* code blocks sit on the input surface */
+.dark pre,
+.dark :not(pre) > code {
+    background: var(--pred-input) !important;
+    border: 1px solid rgba(255, 255, 255, 0.096) !important;
+}
+
+/* links and accents */
+a.text-primary-600,
+.nextra-toc a:hover {
+    color: var(--pred-accent) !important;
+}
+
+/* thin mint scrollbars, same as the app */
+::-webkit-scrollbar {
+    width: 5px;
+    height: 5px;
+}
+::-webkit-scrollbar-thumb {
+    background: rgb(127 200 185 / 0.18);
+    border-radius: 3px;
+}
+::-webkit-scrollbar-track {
+    background: transparent;
+}

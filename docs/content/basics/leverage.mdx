@@ -1,0 +1,79 @@
+---
+title: Using Leverage
+---
+
+import { Callout } from "nextra/components";
+
+# Using Leverage
+
+Leverage lets you make a bigger bet than your own cash would allow. You put up
+some money, Pred lends you the rest, and your position acts larger than your
+deposit.
+
+## A simple example
+
+You have 100 dollars and you are confident about YES. With 3x leverage, you
+control a 300 dollar position. You put in 100, Pred lends 200.
+
+- If YES wins, you keep the gains on the full 300, then repay the 200 plus a
+  little interest. Your upside is much bigger.
+- If YES loses, the losses come out of your 100 first. Lose enough and your
+  position is closed to protect the loan.
+
+Pred currently allows up to **5x** leverage. There are no separate per-user
+caps.
+
+## Interest, called the borrow rate
+
+Borrowing is not free. You pay a borrow rate while the loan is open. The rate is
+not fixed. It moves with how lopsided the market is:
+
+- If lots of people are borrowing to bet the same side, joining that side costs
+  more.
+- Borrowing to bet the other side costs less, sometimes even earns a rebate.
+
+This nudge keeps the two sides roughly balanced, which is what keeps lending
+safe. More on this in [The Lending Machine](/economy/lending-machine).
+
+## Liquidation
+
+If your position loses enough value, it gets **liquidated**: closed early to make
+sure the loan is repaid. Liquidation happens at around 7 percent remaining
+equity. Whatever is left after repaying the loan and fees is returned to you.
+
+Pred does not liquidate on a hair trigger. A position only becomes liquidatable
+30 seconds after the oracle update that crossed the line, and liquidation pauses
+if a second price source disagrees with the oracle. This blocks a single bad
+print from wiping you out.
+
+## The deleverage cliff
+
+Here is the part that makes leverage on a prediction market work at all.
+
+A normal market can fall step by step, so a loan can be wound down smoothly. A
+prediction market does not. At resolution it **jumps**: YES goes straight to 1
+or straight to 0, with no path in between. A loan caught in that jump could
+blow straight through its collateral.
+
+So Pred closes the borrowed part of every position in the final minutes before
+resolution. This is the **deleverage cliff**.
+
+<Callout type="info">
+After the cliff, your debt is zero. You still hold your own bet, just without
+the borrowed money on top. The resolution jump then lands on an ordinary,
+unleveraged position, where it cannot create a bad debt.
+</Callout>
+
+You do not have to do anything. The cliff runs automatically per market just
+before its deadline.
+
+## The short version
+
+- You put up part, Pred lends the rest, up to 5x.
+- You pay a borrow rate that leans to keep the book balanced.
+- Lose too much and you are liquidated at about 7 percent equity.
+- Just before resolution, the borrowed part is closed for you, so the final
+  jump never hits a loan.
+
+Why all of this is safe even in the worst case is the subject of
+[The Safety Wall](/economy/safety-wall).

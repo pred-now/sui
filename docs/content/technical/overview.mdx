@@ -1,0 +1,75 @@
+---
+title: Architecture
+---
+
+import { Callout } from "nextra/components";
+
+# Architecture
+
+This section is the engineering detail behind the plain-English economy. If you
+have not read [How the Economy Works](/economy/overview) yet, start there. The
+source of truth for the numbers is the `PRED_ECON_ADVANCED` spec. Fixed-point
+values are scaled by 1e9 unless stated, and prices and probabilities live in
+the range 0 to 1.
+
+## The engine is the accounting authority
+
+Pred is custodial, and that is the key architectural decision. The chain holds
+funds and positions. The **engine**, Pred's backend, holds everything else: the
+bet imbalance, the pool, open interest, the borrow-rate state, and the ledger.
+
+Because the engine is the single authority, steering, netting, and every gate
+are in-memory reads against engine state. Decisions are made before any
+transaction is signed. The chain is where decisions are committed, not where
+they are computed.
+
+## Single writer per market
+
+Every mutation to a market is serialized by **one writer** for that market.
+
+<Callout type="info">
+A single writer per market means no two opens on the same market race on chain.
+They are ordered in the engine first, then each becomes one signed transaction.
+This sidesteps Sui shared-object contention entirely.
+</Callout>
+
+It also matters for correctness. Steering must read a consistent snapshot of the
+imbalance to make the right decision. A single writer gives that snapshot for
+free. A per-user lock separately serializes withdrawals against liquidation, so
+a user cannot withdraw equity that a pending liquidation is about to consume.
+
+## State
+
+The engine holds, per market:
+
+- Bet imbalance, signed.
+- Leveraged long notional `L` and short notional `S`.
+- Escrow, pool, and peak open interest.
+- The correlation cohort id.
+- The latest oracle reference.
+
+And per user: collateral, debt, accrued fee, and open positions.
+
+## Idempotency
+
+Every external effect is idempotent, keyed on an id:
+
+- Deposits key on the funding transaction digest.
+- Opens, closes, liquidations, and withdrawals key on a request id.
+
+So a retry after an ambiguous chain result settles exactly once. The engine
+ledger is the truth. A reconciliation job continuously checks engine balances
+against on-chain balances and alarms on any drift.
+
+## The two engines
+
+Pred runs two risk engines with separate state:
+
+- The **house engine** prices and steers bets. See
+  [Pricing](/technical/pricing) and [Steering](/technical/steering).
+- The **leverage engine** prices and steers loans, and handles
+  [netting](/technical/netting), [liquidation](/technical/liquidation), and the
+  [capital rule](/technical/capital-rule).
+
+They share one number where it matters: the pool, read by both through the 0.14
+capital gate.

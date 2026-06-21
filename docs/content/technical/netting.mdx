@@ -1,0 +1,47 @@
+---
+title: Netting and Residual
+---
+
+# Netting and Residual
+
+Netting is the cheap-hedge core of both engines. The idea is the same for bets
+and for loans: matched opposite flow covers itself, and only the leftover needs
+real work.
+
+## Match first, route the residual
+
+The house engine internalizes matched YES and NO bets. A matched pair earns the
+full `2h` overround and never touches the vault. Only the net imbalance is laid
+off to the DeepBook Predict vault at the vault spread.
+
+Per market Pred tracks `internalYes`, `internalNo`, and `hedgedToVault`. Net
+exposure is:
+
+```
+net = internalYes - internalNo - hedgedToVault
+```
+
+When `net` crosses the band, Pred mints the offsetting side from the vault to
+pull it back. Above the hard cap, the engine refuses opens that increase
+exposure and accepts only balancing ones. That refusal is an in-memory reject,
+before any transaction is signed.
+
+## Netting the leverage book
+
+Matched leveraged longs and shorts collateralize each other. In every outcome
+the winning side repays its own loan, and the losing side's collateral covers
+its own loan.
+
+> Up to `min(L, S)`, the loans are never at risk and Pred buys nothing. Only the
+> naked `|L - S|` needs a hedge or the pool.
+
+## Netting is a view, not a transfer
+
+Pred does not move anyone's loan. Netting is an accounting view. The solvency
+math simply keys off `|L - S|`. So pool sizing, hedge sizing, and the
+[capital gate](/technical/capital-rule) all read the naked imbalance, never the
+gross. One number per market does the work.
+
+This is why the whole design stays cheap: the gross book can be large, but the
+only thing that consumes capital is the small naked leftover that netting and
+[steering](/technical/steering) could not remove.

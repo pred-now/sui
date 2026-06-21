@@ -1,0 +1,73 @@
+---
+title: The Lending Machine
+---
+
+import { Callout } from "nextra/components";
+
+# The Lending Machine
+
+The lending machine lets people bet bigger with borrowed money, and keeps Pred
+from going broke when they lose.
+
+## Why lending on a bet is hard
+
+Two reasons, and both are real.
+
+1. **The payoff is tilted against the lender.** When the borrower wins, they keep
+   the upside and Pred just collects its interest. When the borrower loses, Pred
+   can be left holding an unpaid loan. Capped gain, uncapped loss.
+2. **A bet can vanish in an instant.** At resolution the price jumps to 1 or 0.
+   There is no smooth slide to unwind a loan along.
+
+A model built for ordinary, slidable assets does not cover this. So the lending
+machine is its own engine, separate from the betting machine.
+
+## The four moves
+
+### 1. Let opposite borrowers cover each other
+
+A user borrowing to bet big on YES and a user borrowing to bet big on NO cancel
+out, just like in the betting machine. Whoever wins repays their own loan, and
+the loser's deposit covers theirs. For every matched pair, Pred lends safely and
+spends nothing. Only the naked imbalance between the two sides needs covering.
+
+### 2. Nudge the borrow rate
+
+If too many people borrow to bet YES, Pred makes borrowing for YES cost more and
+borrowing for NO cost less. Leveraged traders are rate sensitive, so they
+flatten the imbalance themselves. This is the **main safety dial**, named
+`dynamicK`.
+
+The balancing side can even get a rebate. That rebate is capped at what Pred
+saves by not having to hedge that unit, so a balancing borrower is never
+subsidized beyond the value they provide.
+
+### 3. Keep a small safety pool
+
+Whatever leftover imbalance the nudging does not clear is covered two ways: by
+buying the opposite side from the vault, and by a small pool funded out of the
+interest borrowers pay. Because it only ever covers the leftover, the pool stays
+small. This pool is funded by stakers, covered in [The LP Pool](/lp-pool/overview).
+
+### 4. Take the borrowed money off the table before the jump
+
+In the last minutes before a market resolves, Pred closes the borrowed part of
+every position. The user keeps their own bet, just not the borrowed money on
+top.
+
+<Callout type="info">
+This is the deleverage cliff. After it runs, debt is zero everywhere, so the
+resolution jump lands only on ordinary unleveraged positions. The jump can never
+create a bad debt. This single move is what converts unmanageable jump risk into
+ordinary, manageable risk.
+</Callout>
+
+## Putting it together
+
+Netting handles the matched part for free. Steering shrinks the leftover.
+The pool and a hedge cover what remains. The cliff removes the jump. Each move
+takes a bite out of the risk, and what is left for real capital to absorb is
+small.
+
+The hard cap that backs all of this up, and the rule for how much capital to
+hold, are on the next page: [The Safety Wall](/economy/safety-wall).

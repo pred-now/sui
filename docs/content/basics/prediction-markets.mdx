@@ -1,0 +1,58 @@
+---
+title: How Prediction Markets Work
+---
+
+# How Prediction Markets Work
+
+A prediction market turns a question into a price. The price is the crowd's best
+guess at the odds.
+
+## Prices are probabilities
+
+Every share in a market settles at either 1 dollar or 0 dollars. YES pays 1
+dollar if the answer is yes, otherwise nothing. NO is the mirror.
+
+Because a winning share is worth exactly 1 dollar, the price you pay today is
+just the market's estimate of the chance.
+
+| Price you pay | What it means |
+| --- | --- |
+| 0.65 | About a 65 percent chance |
+| 0.50 | A coin flip |
+| 0.10 | A long shot, about 10 percent |
+
+If you buy YES at 0.65 and the answer turns out yes, you paid 65 cents to
+receive 1 dollar. Your profit is 35 cents per share. If the answer is no, you
+lose the 65 cents.
+
+## YES and NO always relate
+
+The fair price of YES and the fair price of NO add up to 1 dollar, because
+exactly one of them will win. If fair YES is 0.40, fair NO is 0.60.
+
+Pred quotes a little above fair on both sides, so its two prices add up to
+slightly more than 1 dollar. That small extra is the spread, the bookmaker's
+margin. See [What is Pred](/basics/what-is-pred) for the worked example.
+
+## Where the fair price comes from
+
+Pred does not invent the odds. It reads them from an oracle, the pricing layer
+inside DeepBook Predict. The oracle publishes a fair probability `f` for each
+market, updated as new information arrives.
+
+Pred takes that `f`, adds its margin, applies a small nudge to keep its book
+balanced, and shows you a price. The details of the nudge are in
+[How the Economy Works](/economy/overview).
+
+<br />
+
+> If the oracle goes stale, meaning its last update is too old to trust, Pred
+> stops quoting that market and pauses it rather than show a price it cannot
+> stand behind.
+
+## Resolution
+
+When the deadline hits, the oracle settles the market to yes or no. Winning
+shares are redeemed for 1 dollar each, losing shares expire worthless, and your
+balance updates. On Pred, any borrowed money is always closed out just before
+this moment, which is covered in [Using Leverage](/basics/leverage).

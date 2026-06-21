@@ -1,0 +1,71 @@
+---
+title: The Validation Harness
+---
+
+# The Validation Harness
+
+The invariants Pred relies on, solvency across elasticity and the 0.14 ratio, are
+only true for the current parameters. Change a parameter and they must be
+re-proven. So the Monte Carlo harness ships with the system and runs in CI. It is
+part of the product, not a one-off study.
+
+## What it runs
+
+The harness keeps:
+
+- `runPortfolio(k, corr)` for correlated jumps across a portfolio of markets.
+- `steerLagSteps` for lagged steering, modeling a delayed crowd response.
+- The metrics `rateStd` for rate jumpiness, `maxLoss` including the resolution
+  settlement, and `peakOI`.
+
+## What fails CI
+
+A change to `dynamicK`, the ceiling, the capital ratio, or the rate law fails CI
+if either of these breaks:
+
+- Worst-case insolvency rises above tolerance.
+- The 0.14 coverage no longer holds.
+
+The seven-scenario model comparison stays in the suite as a regression guard,
+with elasticity defaulting to 1.0.
+
+## Proven versus live
+
+It is worth being precise about what is settled and what is still being learned.
+
+**Proven in simulation, safe to rely on:**
+
+- Solvency holds across all elasticity, because the ceiling caps imbalance.
+- The 0.14 capital ratio bounds single-market insolvency to about 0.04 percent.
+- The three-layer margin of 11, 20, and 34 percent gives room to be slightly
+  wrong.
+
+**Discovered live, instrumented to measure:**
+
+- Real elasticity, which sets the true rejection cost, not solvency. Run
+  conservative until the [meter](/technical/elasticity) tightens at about 35,000
+  fills.
+- Real OI growth, bounded by the 0.14 ratio enforced as a live invariant.
+
+## How Pred launches
+
+Ship with leverage capped low and the pool deliberately oversized relative to
+0.14, buying margin while the meter converges over the first tens of thousands of
+fills. Only after seeing real elasticity and real OI growth does Pred tune capital
+efficiency down toward the simulated numbers.
+
+The launch defaults:
+
+```
+dynamicK        = 4        // holds normal imbalance ~11%
+soft ceiling    = 20%      // dormant backstop
+max leverage    = 5x
+maintenance     ~7%        // liquidation trigger
+deleverage cliff           // on
+capital rule    pool >= 0.14 x peak leveraged OI
+elasticity      measured live, 1.0 as the optimistic default
+```
+
+The pre-committed fallback is wired, not just written down: if `e_hat` settles
+very low and rejection stays above tolerance after `dynamicK` saturates, the
+system steps max leverage down automatically rather than over-steering.

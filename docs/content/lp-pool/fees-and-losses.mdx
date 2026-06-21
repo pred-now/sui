@@ -1,0 +1,52 @@
+---
+title: Fees and Losses
+---
+
+# Fees and Losses
+
+Stakers earn the upside and bear the downside. Both flow through the same
+number, `poolAssets`, which is what drives the share price.
+
+## Where the fees come from
+
+Every revenue event in Pred splits the instant it lands. The sources are:
+
+- The bookmaker spread on matched bets.
+- The margin Pred keeps on residual it hedges through the vault.
+- The leverage borrow premium.
+- Liquidation fees.
+
+## The split
+
+When a fee `F` arrives, it splits between stakers and the protocol:
+
+```
+stakerCut    = F * stakerShare         // added to poolAssets, raises NAV
+protocolCut  = F * (1 - stakerShare)   // to the protocol treasury
+```
+
+The staker share starts high, in the **70 to 80 percent** range, because stakers
+carry the risk and this is real yield rather than printed tokens. It is
+governance tunable. The protocol cut covers operations and a buffer.
+
+There is no token burn here today. If a PRED token exists later, a buyback slice
+could come out of the protocol cut, not the staker cut.
+
+## Losses run the same way in reverse
+
+When the pool covers a liquidation shortfall or a bad debt, `poolAssets` drops,
+and every staker's share takes the hit pro rata.
+
+```
+on loss L:   poolAssets -= L           // lowers NAV for everyone, by share
+```
+
+This is the honest cost of the yield. You are paid well because you are the
+capital standing behind the risk. When the risk shows up, you absorb it.
+
+## Counted exactly once
+
+Every fee and every loss moves `poolAssets` exactly once, keyed on the id of the
+event that caused it. A retry after an ambiguous result can never double count.
+This idempotency is a core [invariant](/technical/capital-rule) and is enforced
+in the engine, not left to chance.
