@@ -6,47 +6,63 @@ title: What is Pred
 
 Pred is a place to bet on yes-or-no questions about the real world.
 
-Each market is a single question with two sides, YES and NO. For example,
-"Will BTC close above 100k on Friday?" You buy the side you believe in. When
-the question resolves, the winning side gets paid and the losing side does not.
+Each market is one question with two sides, YES and NO. For example, "Will BTC
+close above 100k on Friday?" You buy the side you believe in. When the question
+resolves, the winning side gets paid and the losing side does not.
 
 ## Pred is the bookmaker
 
 Picture someone holding a jar. One person bets YES and puts money in. Another
-person bets NO and puts money in. The winner takes the jar. Pred keeps a small
-slice for running the table.
+bets NO and puts money in. The winner takes the jar. Pred keeps a small slice for
+running the table.
+
+```mermaid
+flowchart LR
+    Y[YES bettor<br/>pays in] --> J((The jar))
+    N[NO bettor<br/>pays in] --> J
+    J --> W[Winner takes the jar]
+    J --> P[Pred keeps a small slice]
+```
 
 That is the whole idea. Pred is the house. It quotes prices, takes both sides,
-and pays the winner with the loser's money. **Pred never bets on an outcome
-itself.** It does not care whether YES or NO wins, only that it collects its
-slice on the way through.
+and pays the winner with the loser's money. Pred never bets on an outcome itself.
+It does not care whether YES or NO wins, only that it collects its slice on the
+way through.
 
-## A quick example
+## A worked example
 
-Say the fair odds of YES are 40 cents on the dollar.
+Say the fair odds of YES are 40 cents on the dollar. Pred quotes slightly above
+fair on both sides:
 
-- Pred sells YES for 41 cents.
-- Pred sells NO for 61 cents.
+```ts
+yesPrice = 0.41   // fair 0.40 plus a 1 cent margin
+noPrice  = 0.61   // fair 0.60 plus a 1 cent margin
 
-One person buys YES, one buys NO. That is 41 + 61 = 102 cents collected. The
-winner is paid 100 cents. Pred keeps 2 cents. It does not matter who wins. The
-profit was locked in the moment both bets were placed.
+// one person buys each side
+collected = 0.41 + 0.61   // = 1.02
+paidToWinner = 1.00
+predKeeps = collected - paidToWinner   // = 0.02
+```
 
-That 2 cent margin is called the **spread**. It is how the bookmaker earns.
+One person buys YES, one buys NO. Pred collects 1.02, pays the winner 1.00, and
+keeps 0.02. It does not matter who wins. The profit was locked the moment both
+bets were placed.
+
+That 2 cent margin is the **spread**. It is how the bookmaker earns.
 
 ## What you need to know to start
 
-- A market is a yes-or-no question with a deadline.
-- A price between 0 and 1 is the market's view of the odds. 65 cents means
-  roughly a 65 percent chance.
-- You buy YES or NO at the price Pred quotes.
-- When the market resolves, a winning share pays out 1 dollar, a losing share
-  pays 0.
+| Term | Meaning |
+| --- | --- |
+| Market | A yes-or-no question with a deadline |
+| Price | A number from 0 to 1, the market's view of the odds. 0.65 means about 65% |
+| Share | What you buy. A winning share pays 1 dollar, a losing share pays 0 |
+| Spread | The small extra Pred adds on top of fair odds |
 
 That is enough to place your first bet. The next page explains where the prices
 come from.
 
-## Where to go next
+## Next
 
 - [How Prediction Markets Work](/basics/prediction-markets) covers prices and payouts.
 - [Trading on Pred](/basics/trading) walks through placing a bet.

@@ -1,0 +1,46 @@
+---
+title: Economy Overview
+---
+
+# How the Economy Works
+
+Pred does two jobs, so think of it as two machines running side by side.
+
+- The **betting machine** keeps Pred neutral on outcomes.
+- The **lending machine** keeps Pred solvent when borrowers lose.
+
+They are separate on purpose, because they manage different risks. But they share
+the same playbook.
+
+## The shared playbook
+
+1. **Pair people up for free.** A YES and a NO cancel out. So do a leveraged long
+   and a leveraged short. Matched flow costs Pred nothing.
+2. **Nudge to stay balanced.** Pred changes prices and borrow rates so the crowd
+   itself flattens the leftover. The nudge is free.
+3. **Cover the small leftover.** Whatever remains after pairing and nudging is
+   hedged or backed by a pool. Because it is only the leftover, it is small.
+4. **Cap the worst case.** A hard wall on how lopsided a market can get means Pred
+   stays safe even if nobody responds to the nudge.
+
+## Why this shape matters
+
+The expensive part of being a bookmaker is the imbalance: the side of the book
+with more money on it and nobody on the other side. Everything Pred does aims to
+keep that imbalance tiny.
+
+- Pairing removes it for free.
+- Nudging shrinks what is left.
+- The wall caps what nudging cannot clear.
+
+Only the final sliver ever needs real capital behind it. That is why Pred can run
+on a surprisingly small amount of risk money relative to the volume it handles.
+
+## Read in order
+
+1. [The Betting Machine](/economy/betting-machine), how Pred earns as a bookmaker.
+2. [The Lending Machine](/economy/lending-machine), how Pred lends safely against bets.
+3. [The Safety Wall](/economy/safety-wall), the cap and the capital rule that make it robust.
+4. [The Two Pots of Money](/economy/two-pots), where user money and Pred's money sit.
+
+For the math behind all of it, see the [Technical Reference](/technical).

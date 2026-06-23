@@ -11,23 +11,25 @@ part of the product, not a one-off study.
 
 ## What it runs
 
-The harness keeps:
-
-- `runPortfolio(k, corr)` for correlated jumps across a portfolio of markets.
-- `steerLagSteps` for lagged steering, modeling a delayed crowd response.
-- The metrics `rateStd` for rate jumpiness, `maxLoss` including the resolution
-  settlement, and `peakOI`.
+```ts
+runPortfolio(k, corr)   // correlated jumps across a portfolio of markets
+steerLagSteps           // lagged steering, a delayed crowd response
+// metrics it tracks
+rateStd                 // borrow rate jumpiness
+maxLoss                 // worst loss, including the resolution settlement
+peakOI                  // peak open interest reached
+```
 
 ## What fails CI
 
-A change to `dynamicK`, the ceiling, the capital ratio, or the rate law fails CI
-if either of these breaks:
+A change to `dynamicK`, the ceiling, the capital ratio, or the rate law fails CI if
+either of these breaks:
 
 - Worst-case insolvency rises above tolerance.
 - The 0.14 coverage no longer holds.
 
-The seven-scenario model comparison stays in the suite as a regression guard,
-with elasticity defaulting to 1.0.
+The seven-scenario model comparison stays in the suite as a regression guard, with
+elasticity defaulting to 1.0.
 
 ## Proven versus live
 
@@ -36,9 +38,8 @@ It is worth being precise about what is settled and what is still being learned.
 **Proven in simulation, safe to rely on:**
 
 - Solvency holds across all elasticity, because the ceiling caps imbalance.
-- The 0.14 capital ratio bounds single-market insolvency to about 0.04 percent.
-- The three-layer margin of 11, 20, and 34 percent gives room to be slightly
-  wrong.
+- The 0.14 capital ratio bounds single-market insolvency to about 0.04%.
+- The three-layer margin of 11, 20, and 34 percent gives room to be slightly wrong.
 
 **Discovered live, instrumented to measure:**
 
@@ -49,23 +50,22 @@ It is worth being precise about what is settled and what is still being learned.
 
 ## How Pred launches
 
-Ship with leverage capped low and the pool deliberately oversized relative to
-0.14, buying margin while the meter converges over the first tens of thousands of
-fills. Only after seeing real elasticity and real OI growth does Pred tune capital
+Ship with leverage capped low and the pool deliberately oversized relative to 0.14,
+buying margin while the meter converges over the first tens of thousands of fills.
+Only after seeing real elasticity and real OI growth does Pred tune capital
 efficiency down toward the simulated numbers.
 
-The launch defaults:
-
+```ts
+// launch defaults
+dynamicK     = 4         // holds normal imbalance ~11%
+softCeiling  = 0.20      // dormant backstop
+maxLeverage  = 5         // 5x
+maintenance  = 0.07      // liquidation trigger
+deleverageCliff = true
+capitalRule  = "pool >= 0.14 * peakLeveragedOI"
+elasticity   = "measured live, 1.0 as the optimistic default"
 ```
-dynamicK        = 4        // holds normal imbalance ~11%
-soft ceiling    = 20%      // dormant backstop
-max leverage    = 5x
-maintenance     ~7%        // liquidation trigger
-deleverage cliff           // on
-capital rule    pool >= 0.14 x peak leveraged OI
-elasticity      measured live, 1.0 as the optimistic default
-```
 
-The pre-committed fallback is wired, not just written down: if `e_hat` settles
-very low and rejection stays above tolerance after `dynamicK` saturates, the
-system steps max leverage down automatically rather than over-steering.
+The pre-committed fallback is wired, not just written down: if `eHat` settles very
+low and rejection stays above tolerance after `dynamicK` saturates, the system
+steps max leverage down automatically rather than over-steering.

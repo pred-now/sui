@@ -5,40 +5,39 @@ title: Steering
 # Steering
 
 Steering is how Pred keeps its books balanced without spending money. It runs in
-both engines: on price in the betting machine, and on rate in the lending
-machine.
+both engines: on price in the betting machine, and on rate in the lending machine.
 
 ## Steering the bet book
 
 The lean in the [quote](/technical/pricing) is:
 
-```
-k = kappa * sign-and-ramp(betImbalance / band)
+```ts
+k = kappa * signAndRamp(betImbalance / band)
 ```
 
 A positive bet imbalance means too much YES exposure sitting on Pred. So Pred
-raises `yesAsk` and drops `noAsk` to pull NO. The ramp is gentle in the middle
-of the band and stiff near its edge.
+raises `yesAsk` and drops `noAsk` to pull NO. The ramp is gentle in the middle of
+the band and stiff near its edge.
 
 `betImbalance` is tracked as net internalized exposure per market, signed. It is
 read from a consistent snapshot thanks to the
-[single writer per market](/technical/overview).
+[single writer per market](/technical).
 
 ## Steering the borrow book
 
 The leverage engine holds leveraged long notional `L` and short notional `S` per
 market. The borrow rate is steered the same way, but on rate instead of price.
 
-```
+```ts
 imb       = (L - S) / ceilingNotional        // signed, -1 to 1
-g(x)      = x / (1 - min(|x|, 0.999))         // gentle center, stiff wall
+g(x)      = x / (1 - min(abs(x), 0.999))      // gentle center, stiff wall
 rateLong  = baseRate + dynamicK * g(imb)
 rateShort = baseRate - dynamicK * g(imb)
 ```
 
 The crowded side pays more, the balancing side gets a discount or a rebate. As
-`imb` approaches the ceiling, `g` diverges and the crowded side chokes itself
-off. `dynamicK` is the main safety dial, set to 4 at launch.
+`imb` approaches the ceiling, `g` diverges and the crowded side chokes itself off.
+`dynamicK` is the main safety dial, set to 4 at launch.
 
 ## The rebate cap
 
@@ -46,17 +45,17 @@ off. `dynamicK` is the main safety dial, set to 4 at launch.
 balancing side. Two guards bound it:
 
 - A floor, so Pred never pays more than a position can justify.
-- A cap at the expected hedge saving, so a balancing borrower is never
-  subsidized beyond what they save Pred by not having to hedge that unit.
+- A cap at the expected hedge saving, so a balancing borrower is never subsidized
+  beyond what they save Pred by not having to hedge that unit.
 
 ## Lazy accrual
 
-Rates accrue continuously, but Pred does not run a cron over every position.
-Each position stores a rate index, and interest is accrued lazily when the
-position is next touched. One index per position does the work.
+Rates accrue continuously, but Pred does not run a cron over every position. Each
+position stores a rate index, and interest is accrued lazily when the position is
+next touched. One index per position does the work.
 
 ## Where dynamicK comes from
 
 `dynamicK` is not a fixed guess. It is set by the live
-[elasticity meter](/technical/elasticity), which raises it as crowd
-responsiveness falls, to hold the imbalance near its target without over-steering.
+[elasticity meter](/technical/elasticity), which raises it as crowd responsiveness
+falls, to hold the imbalance near its target without over-steering.

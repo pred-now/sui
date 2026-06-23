@@ -4,19 +4,20 @@ title: Liquidation and the Cliff
 
 # Liquidation and the Cliff
 
-Leverage on a binary market faces two different kinds of loss: the smooth kind,
-where price drifts down and a position can be wound down along the way, and the
-jump kind, where resolution sends price straight to 1 or 0. Pred handles them
-with two different mechanisms.
+Leverage on a binary market faces two kinds of loss: the smooth kind, where price
+drifts down and a position can be wound down along the way, and the jump kind,
+where resolution sends price straight to 1 or 0. Pred handles them with two
+mechanisms: liquidation during the smooth window, and the deleverage cliff in the
+final minutes before the resolution jump.
 
 ## Liquidation, for the smooth window
 
-A position is collateral `C`, borrowed `B`, holding `N = (C + B) / p0` units
-bought at entry price `p0`. The mark `p_t` comes from the SVI mid. Equity is:
+A position is collateral `C`, borrowed `B`, holding `N = (C + B) / p0` units bought
+at entry price `p0`. The mark `p_t` comes from the SVI mid.
 
-```
+```ts
 equity = N * p_t - B - accruedFee
-liquidate when equity <= maintenance * (N * p_t)     // maintenance ~ 0.07
+liquidateWhen: equity <= maintenance * (N * p_t)   // maintenance ~ 0.07
 ```
 
 When the trigger fires, liquidation closes the position by redeeming `N` against
@@ -25,8 +26,8 @@ shortfall to the pool if the redeem did not cover the debt.
 
 Two guards prevent manipulation:
 
-- A position becomes liquidatable only **30 seconds** after the oracle update
-  that crossed it, denying a single-update attack.
+- A position becomes liquidatable only **30 seconds** after the oracle update that
+  crossed it, denying a single-update attack.
 - Liquidation pauses if a Pyth cross-check on spot diverges from the oracle by
   more than 100 bps.
 
@@ -35,11 +36,12 @@ Liquidation only runs in the smooth window. It is not allowed to fight the jump.
 ## The deleverage cliff, for the jump
 
 At expiry minus a window, every open leveraged position has its borrowed portion
-force-closed. Pred sells enough units to repay `B + fee` and hands the rest to
-the user as an unleveraged claim.
+force-closed. Pred sells enough units to repay `B + fee` and hands the rest to the
+user as an unleveraged claim.
 
-```
-after the cliff:   debt = 0 everywhere
+```ts
+// after the cliff
+debt == 0   // everywhere
 ```
 
 With debt at zero, the resolution jump cannot create bad debt. This is the move
@@ -47,13 +49,13 @@ that converts unliquidatable jump risk into ordinary smooth risk.
 
 ## How they interleave
 
-The cliff is a scheduled batch per market, keyed on expiry. It must be
-idempotent, and it must interleave correctly with liquidation:
+The cliff is a scheduled batch per market, keyed on expiry. It must be idempotent,
+and it must interleave correctly with liquidation:
 
-> If a position is mid-liquidation when the cliff fires, the cliff skips it and
-> the liquidation wins.
+> If a position is mid-liquidation when the cliff fires, the cliff skips it and the
+> liquidation wins.
 
-Both operations are the same primitive underneath, "reduce debt to zero by
-selling units," so they share one settlement primitive and a per-position lock.
-That shared primitive is also what makes [settlement](/technical/settlement)
-clean: by the time a market resolves, every position is already unleveraged.
+Both operations are the same primitive underneath, "reduce debt to zero by selling
+units," so they share one settlement primitive and a per-position lock. That shared
+primitive is also what makes [settlement](/technical/settlement) clean: by the time
+a market resolves, every position is already unleveraged.

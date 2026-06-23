@@ -2,28 +2,24 @@
 title: Risks
 ---
 
-import { Callout } from "nextra/components";
-
 # Risks
 
 Staking in the LP pool is not a savings account. You earn real yield because you
 take real risk. Here is the honest list.
 
-<Callout type="warning" emoji="⚠️">
-Pred is on testnet with test funds and the economy is still being tuned. Do not
-treat any of this as a finished, audited product yet.
-</Callout>
+> Pred is on testnet with test funds and the economy is still being tuned. Do not
+> treat any of this as a finished, audited product yet.
 
 ## You bear the tail
 
-The pool's whole job is to stand behind losses. When a liquidation falls short,
-or a position goes bad inside the leverage window, or a black swan hits, the pool
+The pool's whole job is to stand behind losses. When a liquidation falls short, or
+a position goes bad inside the leverage window, or a black swan hits, the pool
 covers it and `poolAssets` drops. Every staker takes that hit pro rata through a
 lower share price.
 
-The design works hard to keep this small: pairing, steering, the 20 percent cap,
-the deleverage cliff, and the 14 cent capital ratio. But small is not zero. A
-rare black swan can still take a single thin pool down a noticeable amount.
+The design works to keep this small: pairing, steering, the 20% cap, the
+deleverage cliff, and the 14 cent capital ratio. But small is not zero. A rare
+black swan can still take a single thin pool down a noticeable amount.
 
 ## Correlated markets
 
@@ -36,9 +32,8 @@ outsized loss.
 ## Your capital can be locked
 
 When the pool is backing open risk, the capital behind that risk cannot be
-withdrawn until the risk clears. Add the unstake cooldown, and there are times
-when you cannot exit immediately. See
-[Withdrawals and Cooldown](/lp-pool/withdrawals).
+withdrawn until the risk clears. Add the unstake cooldown, and there are times you
+cannot exit immediately. See [Withdrawals and Cooldown](/lp-pool/withdrawals).
 
 ## The economy is experimental
 
@@ -51,11 +46,11 @@ flow. A parameter that looks safe today can be adjusted as we learn.
 None of this is unmanaged. The same machinery that earns the yield also caps the
 downside:
 
-- The 20 percent imbalance cap holds losses below the break point.
+- The 20% imbalance cap holds losses below the break point.
 - The 14 cent ratio sizes the pool to a conservative worst case.
 - The hot slice is sized to survive a bad stretch on its own.
-- Every fee and loss is counted exactly once, and balances are reconciled
-  against the chain continuously.
+- Every fee and loss is counted exactly once, and balances are reconciled against
+  the chain continuously.
 
 The full safety argument is in [The Safety Wall](/economy/safety-wall) and
 [The Capital Rule](/technical/capital-rule).

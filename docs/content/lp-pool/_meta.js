@@ -1,5 +1,5 @@
 export default {
-    overview: "Overview",
+    index: "Overview",
     "staking-and-nav": "Staking and NAV",
     "fees-and-losses": "Fees and Losses",
     yield: "Idle Yield",

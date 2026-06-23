@@ -2,27 +2,24 @@
 title: Trading on Pred
 ---
 
-import { Callout } from "nextra/components";
-
 # Trading on Pred
 
-This page walks through the path from signing in to getting paid.
+Here is the path from signing in to getting paid: sign in, deposit USDC, place a
+bet, wait for the market to resolve, then withdraw your equity.
 
 ## 1. Sign in
 
-You log in with a method you already have. Pred supports Slush, Enoki, and
-Privy sign-in. There is no seed phrase to write down to get started.
+You log in with a method you already have. Pred supports Slush, Enoki, and Privy
+sign-in. There is no seed phrase to write down to get started.
 
-Behind the scenes, Pred creates a **proxy account** for you on Sui. This account
-holds your funds and your positions while you trade. Pred manages the signing
-for it so every action is a single, safe transaction. The full custody design
-is in [Custody and Money Flow](/technical/custody).
+Behind the scenes Pred creates a proxy account for you on Sui. This account holds
+your funds and positions while you trade, and Pred manages its signing so every
+action is a single safe transaction. The full custody design is in
+[Custody and Money Flow](/technical/custody).
 
-<Callout type="info">
 This is a custodial setup. It is what makes lending possible, because the
 borrowed funds must not be under your direct control while a loan is open. You
 can always withdraw your own equity to your registered address.
-</Callout>
 
 ## 2. Deposit
 
@@ -33,10 +30,9 @@ your trading balance.
 ## 3. Place a bet
 
 Open a market, pick YES or NO, and enter an amount. Pred shows you the price it
-will fill at, including its spread. Confirm, and the position is yours.
-
-You can close a position before the deadline by selling it back at the current
-price, or hold it to resolution.
+will fill at, including its spread. Confirm, and the position is yours. You can
+close it before the deadline by selling back at the current price, or hold to
+resolution.
 
 ## 4. Get paid
 
@@ -45,20 +41,21 @@ When the market resolves, winning shares pay 1 dollar each and losing shares pay
 resolved market, Pred can still redeem your winnings for you, so nothing gets
 stuck.
 
-## Your balance vs your equity
+## Balance vs equity
 
-Two numbers matter, and they are not the same once you use leverage.
+Two numbers matter, and once you use leverage they are not the same.
 
-- **Balance** is the gross value sitting in your account.
-- **Equity** is what is actually yours: your collateral minus any debt you owe
-  minus fees.
+```ts
+balance = everything sitting in your account
+equity  = collateral - debt - fees   // what is actually yours
+```
 
-You can withdraw up to your **equity**, never the gross balance. This is the
-one rule that keeps borrowed money from walking out the door. Withdrawals are
-sent only to the address you registered.
+You can withdraw up to your **equity**, never the gross balance. This is the one
+rule that keeps borrowed money from walking out the door. Withdrawals are sent
+only to the address you registered.
 
 ## Withdraw
 
 Request a withdrawal of any amount up to your equity. Pred checks your equity
-after settling anything pending, then sends the funds to your registered
-address. Your keys are never shown, exported, or returned by any screen.
+after settling anything pending, then sends the funds to your registered address.
+Your keys are never shown, exported, or returned by any screen.

@@ -1,4 +1,5 @@
 export default {
+    index: "Overview",
     "what-is-pred": "What is Pred",
     "prediction-markets": "How Prediction Markets Work",
     trading: "Trading on Pred",

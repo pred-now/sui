@@ -2,22 +2,20 @@
 title: The Safety Wall
 ---
 
-import { Callout } from "nextra/components";
-
 # The Safety Wall
 
-The nudging keeps the book balanced most of the time. The wall is what keeps
-Pred safe the rest of the time.
+Nudging keeps the book balanced most of the time. The wall is what keeps Pred safe
+the rest of the time.
 
 ## A hard cap on imbalance
 
 Pred never lets one side get more than a set amount lopsided. As the book leans
 toward that cap, the nudging gets stronger and stronger. Past the cap, Pred
-simply refuses new bets on the crowded side and accepts only balancing ones.
+refuses new bets on the crowded side and accepts only balancing ones.
 
-The cap sits at **20 percent** imbalance. The point where the safety pool would
-actually start to fail is around **34 percent**. So the cap is set well below the
-danger line, on purpose.
+The cap sits at **20%** imbalance. The point where the safety pool would actually
+start to fail is around **34%**. So the cap is set well below the danger line, on
+purpose.
 
 ## The three layers
 
@@ -36,27 +34,28 @@ single number and still be fine.
 
 Here is the part worth internalizing.
 
-<Callout type="warning" emoji="🔑">
-**Pred stays solvent even if nobody responds to the nudge.**
+> **Pred stays solvent even if nobody responds to the nudge.** Because the 20% cap
+> holds the imbalance below the break no matter who flips, insolvency stays near
+> zero across every level of crowd responsiveness we tested. What changes with
+> responsiveness is the rejection rate, not the solvency rate.
 
-Because the 20 percent cap holds the imbalance below the break no matter who
-flips, insolvency stays near zero across every level of crowd responsiveness we
-tested. What changes with responsiveness is the rejection rate, not the solvency
-rate.
-</Callout>
-
-In plain terms: if traders ignore the borrow-rate nudge, Pred just has to turn
-away more bets to keep the book under the cap. That costs Pred some business. It
-does not cost the pool. A wrong guess about how people respond is a user
-experience problem we can see and fix live, never a solvency problem.
+In plain terms: if traders ignore the borrow-rate nudge, Pred just turns away more
+bets to keep the book under the cap. That costs Pred some business. It does not
+cost the pool. A wrong guess about how people respond is a user experience problem
+we can see and fix live, never a solvency problem.
 
 ## How much capital to hold
 
 One simple ratio sets it.
 
-> Hold at least **14 cents** of safety capital for every dollar of leveraged
-> open interest. Said the other way: lend up to about **7 times** the size of
-> the pool.
+```ts
+// hold at least 14 cents of safety capital
+// for every dollar of leveraged open interest
+poolAssets >= 0.14 * leveragedOI
+
+// said the other way, lend up to about 7x the pool
+leveragedOI <= poolAssets / 0.14
+```
 
 When borrowing approaches that limit, Pred stops accepting new leveraged opens
 until the pool grows. This is not a one-time setup calculation. It is enforced
@@ -64,7 +63,7 @@ continuously as a live invariant, using the same wall machinery applied to open
 interest.
 
 The 0.14 figure comes from simulating the worst pool loss per dollar of open
-interest across tens of thousands of runs, including black swans, and taking a
+interest across tens of thousands of runs, including black swans, then taking a
 conservative high percentile. The derivation is in
 [The Capital Rule](/technical/capital-rule).
 
@@ -73,7 +72,7 @@ conservative high percentile. The derivation is in
 - **Informed flow.** Priced by the fast-flow fee and bounded by the cap. Not
   removed, only priced and capped.
 - **Correlation.** Markets resolving on the same event jump together and do not
-  diversify. Pred keeps leveraged markets on independent, staggered deadlines,
-  or holds deeper capital for a correlated group.
+  diversify. Pred keeps leveraged markets on independent, staggered deadlines, or
+  holds deeper capital for a correlated group.
 - **A rare black swan.** It can still nick a single thin pool now and then. A
   deeper reserve absorbs it, and the 14 cent ratio sets how deep.

@@ -7,8 +7,8 @@ title: Oracle and Settlement
 ## The mark
 
 The mark for a market is the SVI digital price for its strike, read from the live
-oracle state inside DeepBook Predict. This is canonical. There is no order book
-over the binary to mid against, so the oracle price is the price.
+oracle state inside DeepBook Predict. This is canonical. There is no order book over
+the binary to mid against, so the oracle price is the price.
 
 ## Staleness guards everything
 
@@ -18,30 +18,31 @@ last update is older than the staleness bound, means:
 - No new quotes. The market is paused rather than priced off stale data.
 - No new liquidations. Existing state holds until a fresh read arrives.
 
-The 30 second post-update liquidation delay and the Pyth spot cross-check both
-gate on the same oracle read, so they stay consistent with each other. See
+The 30 second post-update liquidation delay and the Pyth spot cross-check both gate
+on the same oracle read, so they stay consistent with each other. See
 [Liquidation and the Cliff](/technical/liquidation).
 
 ## Settlement is clean by construction
 
-When the oracle settles a market, every remaining position is already
-unleveraged, because the [deleverage cliff](/technical/liquidation) ran in the
-final minutes. So settlement is simple:
+When the oracle settles a market, every remaining position is already unleveraged,
+because the [deleverage cliff](/technical/liquidation) ran in the final minutes. So
+settlement is simple.
 
-```
-for each position:
-    redeem at 1 or 0
-    pay the user their equity from escrow
-    book to the pool any shortfall from positions that went bad
-        inside the leverage window before the cliff
+```ts
+for (const position of market.positions) {
+    redeem(position, outcome ? 1 : 0)   // 1 dollar or 0
+    payUser(position.equity)            // from escrow
+    if (position.wentBadBeforeCliff) {
+        bookShortfallToPool(position)   // smooth-window losses only
+    }
+}
 ```
 
 Because debt is zero everywhere by settlement time, the resolution jump cannot
-create a fresh bad debt. The only losses the pool can see are ones that occurred
+create a fresh bad debt. The only losses the pool can see are ones that happened
 earlier, in the smooth window, before the cliff closed the leverage.
 
 ## Nothing gets stuck
 
 For users who never come back to claim, Pred uses the permissionless redeem path,
-so a resolved position can always be settled and nothing is left stranded on
-chain.
+so a resolved position can always be settled and nothing is left stranded on chain.

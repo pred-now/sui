@@ -8,53 +8,60 @@ The pool uses standard vault accounting, the same shape as an ERC-4626 vault.
 
 ## Shares
 
-When you stake, you receive **shares** of the pool. Shares are your claim on a
-slice of the pool's assets. You do not get a separate stream of rewards. Your
-shares simply become worth more as the pool earns.
+When you stake, you receive shares of the pool. Shares are your claim on a slice
+of the pool's assets. You do not get a separate stream of rewards. Your shares
+simply become worth more as the pool earns.
 
 The price of a share is the pool's assets divided by the total shares:
 
-```
+```ts
 sharePrice = poolAssets / totalShares
 ```
 
 Staking and unstaking convert between USDC and shares at that price:
 
-```
-deposit(amount):   shares  = amount * totalShares / poolAssets
-withdraw(shares):  amount  = shares * poolAssets / totalShares
+```ts
+deposit(amount):   shares = amount * totalShares / poolAssets
+withdraw(shares):  amount = shares * poolAssets / totalShares
 ```
 
-The very first deposit mints shares one to one. After that, every deposit and
+The first deposit ever mints shares one to one. After that, every deposit and
 withdrawal uses the live share price, so nobody can stake or unstake at a stale
 valuation.
 
 ## NAV, the value of a share
 
-NAV stands for net asset value, the value behind each share. You earn by NAV
-going up, not by tokens being handed to you.
+NAV stands for net asset value, the value behind each share. You earn by NAV going
+up, not by tokens being handed to you. A fee raises `poolAssets`, so the share
+price rises. A loss lowers `poolAssets`, so the share price falls.
 
-- A fee lands. `poolAssets` rises. Your share price rises.
-- A loss lands. `poolAssets` falls. Your share price falls.
+That is the whole mechanism. No emissions, no inflation, no rewards token. Just
+the pool's real assets divided by the real shares.
 
-That is the whole mechanism. No emissions, no inflation, no rewards token.
-Just the pool's real assets divided by the real shares.
+## A worked example
 
-## A quick example
-
-Suppose the pool holds 1,000,000 USDC and has 1,000,000 shares. The share price
+Suppose the pool holds 1,000,000 USDC and has 1,000,000 shares, so the share price
 is 1.00.
 
-- You stake 100,000 USDC and receive 100,000 shares. The pool now holds
-  1,100,000 USDC and 1,100,000 shares, price still 1.00.
-- Over time the pool earns 50,000 USDC in fees. Assets rise to 1,150,000, shares
-  stay at 1,100,000. Share price is 1,150,000 / 1,100,000 = about 1.045.
-- Your 100,000 shares are now worth about 104,500 USDC.
+```ts
+// you stake 100,000
+poolAssets  = 1,100,000
+totalShares = 1,100,000
+sharePrice  = 1.00          // still 1.00
 
-You did nothing. The shares gained value as the pool earned.
+// the pool earns 50,000 in fees
+poolAssets  = 1,150,000
+totalShares = 1,100,000
+sharePrice  = 1.045         // 1,150,000 / 1,100,000
+
+// your 100,000 shares are now worth
+value = 100,000 * 1.045     // about 104,500
+```
+
+You did nothing. Your shares gained value as the pool earned.
 
 ## The accounting always closes
 
-The sum of every staker's share value equals `poolAssets`. No path mints or
-burns shares without moving assets to match. This is one of the pool's
+The sum of every staker's share value equals `poolAssets`. No path mints or burns
+shares without moving assets to match. This is one of the pool's
 [invariants](/technical/capital-rule), checked continuously.

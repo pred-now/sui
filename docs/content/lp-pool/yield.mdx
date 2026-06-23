@@ -2,42 +2,40 @@
 title: Idle Yield
 ---
 
-import { Callout } from "nextra/components";
-
 # Idle Yield
 
-Most of the pool sits idle most of the time, waiting to back a loss that may
-never come. Idle capital can earn a little extra without taking on new risk.
+Most of the pool sits idle most of the time, waiting to back a loss that may never
+come. Idle capital can earn a little extra without taking on new risk.
 
 ## Hot and supplied
 
-The pool is split into two buckets:
+The pool is split into two buckets.
 
-```
-hot       = liquid USDC Pred holds, backs current risk and redemptions
-supplied  = USDC supplied to a DeepBook Margin pool, earning lending yield
+```ts
+hot      = liquid USDC Pred holds, backs current risk and redemptions
+supplied = USDC supplied to a DeepBook Margin pool, earning lending yield
 ```
 
-The interest earned on the supplied bucket accrues into `poolAssets`, so it
-flows to stakers like any other revenue.
+The interest earned on the supplied bucket accrues into `poolAssets`, so it flows
+to stakers like any other revenue.
 
 ## Water marks
 
-Funds move between the two buckets on simple thresholds:
+Funds move between the two buckets on simple thresholds.
 
-- Below the **low mark**, pull funds from Margin back into hot.
-- Above the **high mark**, supply the excess to Margin.
+```ts
+if hot < lowWater:   pull funds from Margin into hot
+if hot > highWater:  supply the excess to Margin
+```
 
-The hot bucket is sized to survive a bad stretch entirely on its own. The
-supplied bucket is bonus yield and a slow top up, never a lifeline. Pred never
-relies on a Margin withdrawal landing in time to cover a loss.
+The hot bucket is sized to survive a bad stretch entirely on its own. The supplied
+bucket is bonus yield and a slow top up, never a lifeline. Pred never relies on a
+Margin withdrawal landing in time to cover a loss.
 
 ## Supply only, never borrow
 
-<Callout type="info">
-Pred only ever supplies and withdraws its own funds in DeepBook Margin. There is
-no borrow path. The pool never leverages itself.
-</Callout>
+> Pred only ever supplies and withdraws its own funds in DeepBook Margin. There is
+> no borrow path. The pool never leverages itself.
 
 ## Mainnet only
 

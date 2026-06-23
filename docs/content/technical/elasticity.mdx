@@ -2,59 +2,63 @@
 title: The Elasticity Meter
 ---
 
-import { Callout } from "nextra/components";
-
 # The Elasticity Meter
 
-Steering only works if traders respond to it. How strongly they respond is
-called elasticity, and it is the one number Pred cannot assume. So Pred measures
-it live.
+Steering only works if traders respond to it. How strongly they respond is called
+elasticity, and it is the one number Pred cannot assume. So Pred measures it live.
 
 ## Measuring it
 
 Every steering decision emits a pair `(incentive, flipped)`, where `incentive` is
 the rate differential offered to the balancing side and `flipped` is whether the
 marginal opener took it. Pred regresses `flipped` on `incentive` through the
-origin:
+origin.
 
-```
-e_hat = Sxy / Sxx          // Sxy += incentive*flipped, Sxx += incentive^2
+```ts
+// two running sums, no history stored
+Sxy += incentive * flipped
+Sxx += incentive * incentive
+eHat = Sxy / Sxx
 ```
 
-This is two running sums, no history stored. It recovers true elasticity tightly,
-within about 35,000 fills, with a standard error from the residual stream. Until
-that standard error is small, Pred is in a calibration period and runs
-conservative.
+This recovers true elasticity tightly, within about 35,000 fills, with a standard
+error from the residual stream. Until that standard error is small, Pred is in a
+calibration period and runs conservative.
 
 ## The control loop
 
 Holding the imbalance at a fixed target needs steering strength roughly inversely
 proportional to elasticity, because the crowd's response scales with elasticity.
 
+```ts
+dynamicK = clamp(K_ref * (e_ref / eHat), K_min, K_max)
 ```
-dynamicK = clamp(K_ref * (e_ref / e_hat), K_min, K_max)
+
+```mermaid
+flowchart LR
+    M[Measure eHat] --> C[Compute dynamicK]
+    C --> S[Steer borrow rate]
+    S --> O[Observe flips]
+    O --> M
 ```
 
 The ceiling is left fixed. Tightening it would only add rejections. Pred adds
-hysteresis so `dynamicK` does not chatter as `e_hat` wobbles, and rate-limits how
-fast it moves so traders are not whipsawed. The reason `dynamicK = 4` was chosen
-is that it holds the imbalance near 11 percent while keeping rate volatility under
-about 5 percentage points.
+hysteresis so `dynamicK` does not chatter as `eHat` wobbles, and rate-limits how
+fast it moves so traders are not whipsawed. `dynamicK = 4` was chosen because it
+holds the imbalance near 11% while keeping rate volatility under about 5 percentage
+points.
 
-The honest limit: at very weak `e_hat`, `dynamicK` saturates at `K_max` and the
-residual rejection becomes structural. Past that point, the real lever is lower
-max leverage, not more steering. That fallback is pre-committed, not improvised
-live.
+The honest limit: at very weak `eHat`, `dynamicK` saturates at `K_max` and the
+residual rejection becomes structural. Past that point, the real lever is lower max
+leverage, not more steering. That fallback is pre-committed, not improvised live.
 
 ## Why this is safe at any elasticity
 
 This is the single most important property in the system.
 
-<Callout type="warning" emoji="🔑">
-Because the ceiling caps the imbalance below the break no matter who flips,
-insolvency stays near zero at every elasticity. What moves with elasticity is the
-rejection rate, not the insolvency rate.
-</Callout>
+> Because the ceiling caps the imbalance below the break no matter who flips,
+> insolvency stays near zero at every elasticity. What moves with elasticity is the
+> rejection rate, not the insolvency rate.
 
 | elasticity | imbalance % | rejected % | insolvent % |
 | --- | --- | --- | --- |
@@ -72,5 +76,5 @@ live. It never costs the pool.
 Since solvency is structurally held, the alarms are about cost, not survival:
 
 - Rejection rate climbing.
-- `e_hat` drifting down.
+- `eHat` drifting down.
 - Pool coverage, defined as `pool / (0.14 * OI)`, dropping toward 1.

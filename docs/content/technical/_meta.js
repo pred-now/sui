@@ -1,5 +1,5 @@
 export default {
-    overview: "Architecture",
+    index: "Architecture",
     pricing: "Pricing and the Spread",
     steering: "Steering",
     netting: "Netting and Residual",
