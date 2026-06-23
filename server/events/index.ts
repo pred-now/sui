@@ -31,6 +31,9 @@ export function setupSockets(
 
         socket.emit("markets:snapshot", await groupedSnapshot(redis));
 
+        // round-trip latency probe: ack immediately so the client can time the socket
+        socket.on("ping:check", (ack?: Ack) => ack?.(1));
+
         socket.on("market:details:get", async (oracleId: string, ack?: Ack) => {
             const d = await details.get(oracleId);
             if (ack) ack(d);
