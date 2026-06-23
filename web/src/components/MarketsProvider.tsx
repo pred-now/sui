@@ -13,7 +13,6 @@ import { io, type Socket } from "socket.io-client";
 import { useAuth } from "@/components/AuthProvider";
 import { type Market, type MarketDetails, type Snapshot } from "@/lib/markets";
 import { fiftyStrike, yesProbability } from "@/lib/odds";
-import { nearExpiry } from "@/lib/bets";
 
 const SOCKET_URL = process.env.NEXT_PUBLIC_SOCKET_URL ?? "http://localhost:4000";
 
@@ -111,14 +110,10 @@ export default function MarketsProvider({ children }: { children: ReactNode }) {
         }
         setSelectedId((prev) => {
             if (prev && markets.some((m) => m.oracleId === prev)) return prev;
-            // prefer the soonest active market that still has leverage runway (outside the cliff window);
-            // a near-expiry default would force-close any leveraged bet at once
-            const now = Date.now();
-            const tradeable = markets.find(
-                (m) => m.status === "active" && !nearExpiry(m.expiry, now),
-            );
+            // always default to the closest market: the soonest-expiring active one.
+            // markets is sorted by expiry ascending, so the first active is the nearest.
             const active = markets.find((m) => m.status === "active");
-            return (tradeable ?? active ?? markets[0]).oracleId;
+            return (active ?? markets[0]).oracleId;
         });
     }, [markets]);
 
