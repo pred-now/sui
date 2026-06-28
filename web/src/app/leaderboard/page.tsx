@@ -50,7 +50,7 @@ export default function Leaderboard() {
 
             <div className="min-h-0 flex-1 overflow-y-auto p-4">
                 <div className="mx-auto max-w-4xl">
-                    <Table>
+                    <Table className="min-w-155">
                     <TableHeader>
                         <TableRow className="border-pred-edge/6 hover:bg-transparent">
                             {cols.map((c, i) => (

@@ -102,19 +102,30 @@ export default function MarketsProvider({ children }: { children: ReactNode }) {
         );
     }, [selectedId, detailsMap, socket]);
 
-    // default to earliest active, keep if still present
+    // select the closest active, not-yet-expired market. re-checks every second so the view never
+    // stays on a market that has expired (its expiry passes before it settles and leaves the list).
     useEffect(() => {
         if (markets.length === 0) {
             setSelectedId(null);
             return;
         }
-        setSelectedId((prev) => {
-            if (prev && markets.some((m) => m.oracleId === prev)) return prev;
-            // always default to the closest market: the soonest-expiring active one.
-            // markets is sorted by expiry ascending, so the first active is the nearest.
-            const active = markets.find((m) => m.status === "active");
-            return (active ?? markets[0]).oracleId;
-        });
+        const pick = () =>
+            setSelectedId((prev) => {
+                const now = Date.now();
+                // a market is selectable only while it is active and has not expired yet
+                const isLive = (id: string | null) =>
+                    markets.some((m) => m.oracleId === id && m.status === "active" && m.expiry > now);
+                if (prev && isLive(prev)) return prev; // keep the current market while it is still live
+                // markets are sorted by expiry ascending, so the first live one is the nearest
+                const next =
+                    markets.find((m) => m.status === "active" && m.expiry > now) ??
+                    markets.find((m) => m.status === "active") ??
+                    markets[0];
+                return next.oracleId;
+            });
+        pick();
+        const t = setInterval(pick, 1000);
+        return () => clearInterval(t);
     }, [markets]);
 
     const selected = markets.find((m) => m.oracleId === selectedId) ?? null;

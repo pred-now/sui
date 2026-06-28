@@ -34,9 +34,9 @@ export default function PriceChart() {
     return (
         <>
             {/* toolbar */}
-            <div className="flex flex-none items-center gap-3.5 border-b border-pred-edge/10 px-4 py-2">
+            <div className="flex flex-none items-center gap-3.5 overflow-x-auto border-b border-pred-edge/10 px-4 py-2">
                 {/* chart type */}
-                <div className="flex items-center gap-0.5">
+                <div className="flex shrink-0 items-center gap-0.5">
                     {chartTypes.map(({ value, label, icon: Icon }) => {
                         const on = value === chartType;
                         return (
@@ -60,9 +60,9 @@ export default function PriceChart() {
 
                 {isLine && (
                     <>
-                        <span className="h-4 w-px bg-pred-edge/15" />
+                        <span className="h-4 w-px shrink-0 bg-pred-edge/15" />
 
-                        <div className="flex items-center gap-0.5">
+                        <div className="flex shrink-0 items-center gap-0.5">
                             {TIMEFRAMES.map((t) => {
                                 const on = t.label === timeframe;
                                 return (
@@ -83,7 +83,7 @@ export default function PriceChart() {
                             })}
                         </div>
 
-                        <div className="ml-auto flex items-center gap-2.5 text-pred-dimmer">
+                        <div className="ml-auto flex shrink-0 items-center gap-2.5 text-pred-dimmer">
                             <Button
                                 variant="ghost"
                                 size="icon"

@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Noto_Sans, Noto_Serif } from "next/font/google";
 
 import Header from "@/components/Header";
@@ -26,6 +26,12 @@ export const metadata: Metadata = {
     description: "Trade prediction markets on PRED. Borrow money and trade with leverage up to 10x.",
 };
 
+export const viewport: Viewport = {
+    width: "device-width",
+    initialScale: 1,
+    themeColor: "#041d1a",
+};
+
 export default function RootLayout({
     children,
 }: Readonly<{
@@ -41,10 +47,9 @@ export default function RootLayout({
                     <TooltipProvider delayDuration={150}>
                         <MarketsProvider>
                             <TradingProvider>
-                                {/* inline layout holds the frame before dev css streams in */}
                                 <div
-                                    className="flex h-screen flex-col overflow-hidden bg-pred-bg text-[13px] text-pred-text tabular-nums"
-                                    style={{ display: "flex", flexDirection: "column", minWidth: 1024, minHeight: 680 }}
+                                    className="flex h-dvh flex-col overflow-hidden bg-pred-bg text-[13px] text-pred-text tabular-nums"
+                                    style={{ display: "flex", flexDirection: "column" }}
                                 >
                                     <Header />
                                     <WelcomeBanner />

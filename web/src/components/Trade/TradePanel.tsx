@@ -49,7 +49,7 @@ export default function TradePanel() {
     const { open: openDeposit } = useDeposit();
     const { open: openWithdraw } = useWithdraw();
 
-    const [amount, setAmount] = useState("100");
+    const [amount, setAmount] = useState("");
     const [leverage, setLeverage] = useState(1);
     const [err, setErr] = useState<string | null>(null);
     const now = useNow();
@@ -136,7 +136,7 @@ export default function TradePanel() {
     };
 
     return (
-        <aside className="flex h-full w-full flex-col overflow-y-auto bg-pred-panel">
+        <aside className="flex w-full flex-col bg-pred-panel lg:h-full lg:overflow-y-auto">
             <div className="p-3.5">
                 {/* outcome */}
                 <div className="mb-3.5 flex gap-2 pt-[1px]">
@@ -229,6 +229,7 @@ export default function TradePanel() {
                         value={amount}
                         onChange={(e) => setAmount(e.target.value.replace(/[^0-9.]/g, ""))}
                         inputMode="decimal"
+                        placeholder="0.00"
                         className="h-auto min-w-0 flex-1 border-0 bg-transparent p-0 text-base font-semibold text-pred-text shadow-none focus-visible:ring-0"
                     />
                     <span className="text-xs font-semibold text-pred-dim">USDC</span>

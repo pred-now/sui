@@ -53,17 +53,17 @@ export default function Header() {
     };
 
     return (
-        <header className="flex h-13 flex-none items-center gap-6 border-b border-pred-edge/10 bg-pred-deep pr-4">
+        <header className="flex h-13 flex-none items-center gap-3 border-b border-pred-edge/10 bg-pred-deep pr-3 sm:gap-6 sm:pr-4">
             <Image
                 src="/pred-logo.svg"
                 alt="PRED"
                 width={100}
                 height={48}
                 priority
-                className="h-10 w-auto"
+                className="h-8 w-auto sm:h-10"
             />
 
-            <nav className="flex items-center gap-6 text-xs">
+            <nav className="flex items-center gap-4 text-xs sm:gap-6">
                 {navItems.map((item) => {
                     const active = pathname === item.href;
                     return (
@@ -99,7 +99,9 @@ export default function Header() {
                                     variant="outline"
                                     className="h-8.5 gap-2 border-pred-edge/20 bg-pred-elevated px-3 font-medium text-secondary-foreground hover:border-pred-edge/40 hover:bg-pred-elevated hover:text-pred-text"
                                 >
-                                    <Balances />
+                                    <span className="hidden sm:contents">
+                                        <Balances />
+                                    </span>
                                     {short(user.address)}
                                     <ChevronDown className="size-3 transition-transform group-data-[state=open]/button:rotate-180" />
                                 </Button>

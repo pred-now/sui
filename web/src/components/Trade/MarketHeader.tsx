@@ -38,8 +38,8 @@ export default function MarketHeader() {
 
     // volume/liquidity/OI are placeholders until the engine reports them
     const stats = [
-        { label: "Yes Price", value: yesC, className: "text-sm font-semibold text-pred-green" },
-        { label: "No Price", value: noC, className: "text-sm font-semibold text-pred-red" },
+        { label: "Yes (fair)", value: yesC, className: "text-sm font-semibold text-pred-green" },
+        { label: "No (fair)", value: noC, className: "text-sm font-semibold text-pred-red" },
         { label: "Spot", value: spot, className: "text-sm font-semibold text-pred-text" },
         { label: "24h Volume", value: "$4,182,540", className: "text-sm font-semibold text-pred-text" },
         { label: "Liquidity", value: "$1,284,900", className: "text-sm font-semibold text-pred-text" },
@@ -47,10 +47,10 @@ export default function MarketHeader() {
     ];
 
     return (
-        <div className="flex flex-none items-center border-b border-pred-edge/10 px-4 py-2.5">
+        <div className="flex flex-none flex-col gap-2 border-b border-pred-edge/10 px-4 py-2.5 lg:flex-row lg:items-center lg:gap-0">
             <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                    <button className="group flex cursor-pointer items-center gap-3 pr-5.5 text-left outline-none">
+                    <button className="group flex min-w-0 cursor-pointer items-center gap-3 pr-0 text-left outline-none lg:pr-5.5">
                         <Image
                             src="/btc.svg"
                             alt="BTC"
@@ -59,8 +59,8 @@ export default function MarketHeader() {
                             className="shrink-0"
                         />
                         <div className="min-w-0">
-                            <div className="flex items-center gap-2">
-                                <span className="text-base font-semibold whitespace-nowrap text-pred-text">
+                            <div className="flex min-w-0 items-center gap-2">
+                                <span className="truncate text-sm font-semibold text-pred-text lg:text-base">
                                     {question}
                                 </span>
                                 <ChevronDown className="size-[13px] shrink-0 text-pred-dim transition-transform group-data-[state=open]:rotate-180" />
@@ -70,7 +70,7 @@ export default function MarketHeader() {
                 </DropdownMenuTrigger>
                 <DropdownMenuContent
                     align="start"
-                    className="max-h-[60vh] w-[340px] border border-pred-edge/15"
+                    className="max-h-[60vh] w-[min(340px,88vw)] border border-pred-edge/15"
                 >
                     <DropdownMenuLabel className="text-pred-dimmer">
                         Markets
@@ -120,18 +120,21 @@ export default function MarketHeader() {
                 </DropdownMenuContent>
             </DropdownMenu>
 
-            <Separator orientation="vertical" className="h-10 bg-pred-edge/10" />
+            <Separator
+                orientation="vertical"
+                className="hidden h-10 bg-pred-edge/10 lg:block"
+            />
 
-            <div className="flex items-center gap-7.5 overflow-hidden pl-5.5">
+            <div className="flex items-center gap-6 overflow-x-auto pl-0 lg:gap-7.5 lg:pl-5.5">
                 {stats.map((stat) => (
-                    <div key={stat.label}>
+                    <div key={stat.label} className="shrink-0">
                         <div className="mb-[3px] text-[11px] text-pred-dimmer">
                             {stat.label}
                         </div>
                         <div className={stat.className}>{stat.value}</div>
                     </div>
                 ))}
-                <div>
+                <div className="shrink-0">
                     <div className="mb-[3px] text-[11px] text-pred-dimmer">
                         Resolution
                     </div>

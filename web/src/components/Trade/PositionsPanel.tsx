@@ -86,7 +86,7 @@ function PositionsTable({
 }) {
     const now = useNow();
     return (
-        <Table>
+        <Table className="min-w-205">
             <TableHeader>
                 <TableRow className="border-pred-edge/6 hover:bg-transparent">
                     {posCols.map((c, i) => (
@@ -177,7 +177,7 @@ function PositionsTable({
 
 function HistoryTable({ history }: { history: HistItem[] }) {
     return (
-        <Table>
+        <Table className="min-w-155">
             <TableHeader>
                 <TableRow className="border-pred-edge/6 hover:bg-transparent">
                     {histCols.map((c, i) => (
