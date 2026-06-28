@@ -6,6 +6,7 @@ import Footer from "@/components/Footer";
 import Providers from "@/components/auth/Providers";
 import MarketsProvider from "@/components/MarketsProvider";
 import TradingProvider from "@/components/Trade/TradingProvider";
+import StarterGuide from "@/components/StarterGuide";
 import WelcomeBanner from "@/components/Trade/WelcomeBanner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 
@@ -57,6 +58,7 @@ export default function RootLayout({
                                         {children}
                                     </main>
                                     <Footer />
+                                    <StarterGuide />
                                 </div>
                             </TradingProvider>
                         </MarketsProvider>

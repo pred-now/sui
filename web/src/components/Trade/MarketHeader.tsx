@@ -50,7 +50,10 @@ export default function MarketHeader() {
         <div className="flex flex-none flex-col gap-2 border-b border-pred-edge/10 px-4 py-2.5 lg:flex-row lg:items-center lg:gap-0">
             <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                    <button className="group flex min-w-0 cursor-pointer items-center gap-3 pr-0 text-left outline-none lg:pr-5.5">
+                    <button
+                        data-tour="market"
+                        className="group flex min-w-0 cursor-pointer items-center gap-3 pr-0 text-left outline-none lg:pr-5.5"
+                    >
                         <Image
                             src="/btc.svg"
                             alt="BTC"

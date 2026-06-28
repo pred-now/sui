@@ -139,7 +139,7 @@ export default function TradePanel() {
         <aside className="flex w-full flex-col bg-pred-panel lg:h-full lg:overflow-y-auto">
             <div className="p-3.5">
                 {/* outcome */}
-                <div className="mb-3.5 flex gap-2 pt-[1px]">
+                <div data-tour="outcome" className="mb-3.5 flex gap-2 pt-[1px]">
                     <Button
                         variant="outline"
                         onClick={() => setActiveSide("yes")}
@@ -169,7 +169,7 @@ export default function TradePanel() {
                 </div>
 
                 {/* leverage */}
-                <div className="mb-4">
+                <div data-tour="leverage" className="mb-4">
                     <div className="mb-2.25 flex items-center justify-between">
                         <Hint text={HINTS.leverage} className="text-xs text-pred-dim">Leverage</Hint>
                         <span className="text-[15px] font-bold text-pred-white">{lev}x</span>
@@ -223,7 +223,10 @@ export default function TradePanel() {
                         Balance: <span className="text-secondary-foreground">{usd(availableBase)}</span>
                     </span>
                 </div>
-                <div className="mb-4 flex h-[42px] items-center gap-2 rounded-[4px] border border-pred-edge/15 bg-pred-input px-3">
+                <div
+                    data-tour="amount"
+                    className="mb-4 flex h-[42px] items-center gap-2 rounded-[4px] border border-pred-edge/15 bg-pred-input px-3"
+                >
                     <span className="text-[15px] font-semibold text-pred-dim">$</span>
                     <Input
                         value={amount}
@@ -269,6 +272,7 @@ export default function TradePanel() {
                 </div>
 
                 <Button
+                    data-tour="place"
                     disabled={!canPlace}
                     onClick={onPlace}
                     className={cn(
@@ -290,6 +294,7 @@ export default function TradePanel() {
                 {/* deposit / withdraw */}
                 <div className="mt-3.5 flex gap-2">
                     <Button
+                        data-tour="deposit"
                         variant="outline"
                         onClick={openDeposit}
                         className="h-auto flex-1 rounded-[2px] border-pred-edge/20 bg-pred-elevated py-2.5 text-[13px] font-semibold text-secondary-foreground hover:border-pred-edge/40 hover:bg-pred-elevated hover:text-pred-text"
